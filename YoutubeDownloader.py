@@ -46,7 +46,7 @@ def download_media():
             media_name = media_manager.download_playlist(url, format=str(media_type.get()))
             is_playlist.set(False)
         else:
-            media_name = media_manager.download_media(url, format=str(media_type.get()), use_proxies=with_proxies)
+            media_name = media_manager.download_media(url, format=str(media_type.get()))
     except Exception:
         set_download_status_label(text="ERROR: Problem trying to download media/playlist.")
         return
