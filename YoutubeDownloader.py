@@ -93,11 +93,6 @@ is_playlist = tk.BooleanVar()
 pl_checkbox = ttk.Checkbutton(root, text="playlist?", variable=is_playlist)
 pl_checkbox.grid(row=2, column=2, sticky=tk.N, pady=5)
 
-# Proxies checkbox
-with_proxies = tk.BooleanVar()
-pl_checkbox = ttk.Checkbutton(root, text="with a proxy?", variable=with_proxies)
-pl_checkbox.grid(row=2, column=2, sticky=tk.S, pady=0)
-
 # Result Label
 download_status_label = ttk.Label(root, foreground="Red", wraplength=275, justify="center")
 

@@ -8,7 +8,6 @@ from pytubefix.cli import on_progress
 from urllib.parse import urlparse
 import subprocess
 import os
-import random
 
 # Checks if provided text is a valid URL. Returns true if URL is valid or false if otherwise
 def check_youtube_url(possible_url):
@@ -20,8 +19,6 @@ def check_youtube_url(possible_url):
         return False
     except ValueError:
         return False
-
-proxies_list = []
 
 # Downloads media given url into Downloads folder and returns name of downloaded media
 def download_media(url, format=''):
