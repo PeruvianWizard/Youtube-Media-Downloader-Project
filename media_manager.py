@@ -1,4 +1,4 @@
-# Copyright (C) 2025 PeruvianWizard.
+# Copyright (C) 2026 PeruvianWizard.
 # All Rights Reserved.
 # It may be used however you want as long as it doesn't break a law.
 
@@ -8,28 +8,8 @@ from pytubefix.cli import on_progress
 from urllib.parse import urlparse
 import subprocess
 import os
-import _pickle
-
-# Backs up dictionary with recent downloads into text file
-def download_backup(dic):
-    try:
-        with open("media_urls.txt", "wb") as urls_save:
-            _pickle.dump(dic, urls_save)
-            print("BACKUP_CREATION_SUCCESS: Backup created successfully.")
-    except Exception:
-        print("BACKUP_CREATION_FAILURE: Backup could not be created.")
-
-# Restore backup from text file
-def restore_backup():
-    dic = {}
-    try:
-        with open("media_urls.txt", "rb") as urls_open:
-            dic = _pickle.load(urls_open)
-            print("BACKUP_RESTORATION_SUCCESS: Backup restored successfully.")
-            return dic
-    except Exception:
-        print("BACKUP_RESTORATION_FAILURE: There is no backup to restore.")
-        return {}
+from proxies import get_valid_proxies
+import random
 
 # Checks if provided text is a valid URL. Returns true if URL is valid or false if otherwise
 def check_youtube_url(possible_url):
@@ -42,20 +22,38 @@ def check_youtube_url(possible_url):
     except ValueError:
         return False
 
+proxies_list = []
+
+# TO-DO: use asyncio to make program wait for the proxy to finish
+def get_proxy():
+    global proxies_list
+
+    print("Getting Proxy Server...")
+    if len(proxies_list) == 0:
+        proxies_list = get_valid_proxies()
+    proxy = {'http': proxies_list.pop(random.randint(0, len(proxies_list) - 1))}
+    print(proxy)
+
+    return proxy
+
 # Downloads media given url into Downloads folder and returns name of downloaded media
-def download_media(url, format=''):
+def download_media(url, format='', use_proxies=False):
     valid_formats = ['M4A', 'MP4']
 
     # Check that correct format was passed as argument
     if format not in valid_formats:
         raise ValueError(f"Invalid format. Choose from: {valid_formats}")
 
-    yt = YouTube(url, on_progress_callback=on_progress)
+    if use_proxies:
+        proxy = get_proxy()
+
+    yt = YouTube(url, on_progress_callback=on_progress, 
+                 proxies= { **(proxy if use_proxies else {})})
 
     if format == 'M4A':
         print("Downloading audio...")
         ys = yt.streams.filter(only_audio=True).order_by('abr').desc().first()
-        ys.download(filename=yt.title +'.m4a', output_path=os.path.expanduser("~")+"/Downloads")
+        ys.download(filename=yt.title +'.m4a', output_path=os.path.join(os.path.expanduser("~"), "Downloads"))
     else:
         print("Downloading video with audio...")
         video_path = os.path.abspath(yt.title+'.mp4')
@@ -79,7 +77,7 @@ def download_media(url, format=''):
         os.remove(video_path)
         os.remove(audio_path)
 
-        return yt.title
+    return yt.title
 
 # Dowloads a playlist by iterating through each url in a playlist and downloads them one by one
 # Uses the download_media function above
