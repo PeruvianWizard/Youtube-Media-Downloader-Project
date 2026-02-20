@@ -1,17 +1,18 @@
-# Copyright (C) 2025 PeruvianWizard.
+# Copyright (C) 2026 PeruvianWizard.
 # All Rights Reserved.
 # It may be used however you want as long as it doesn't break a law.
 
 import tkinter as tk
 from tkinter import ttk
 import media_manager
+import backup_manager
 
 # Limit for recently downloaded media dictionary
 RECENT_LIMIT = 10
 
 # Dictionary to hold recently downloaded media.
 # Restores from backup is there is any. Else, the function returns an empty dicitonary.
-recently_downloaded = media_manager.restore_backup()
+recently_downloaded = backup_manager.restore_backup()
 
 # Download to set the download_status_label text based on the state of the download
 def set_download_status_label(text=''):
@@ -45,7 +46,7 @@ def download_media():
             media_name = media_manager.download_playlist(url, format=str(media_type.get()))
             is_playlist.set(False)
         else:
-            media_name = media_manager.download_media(url, format=str(media_type.get()))
+            media_name = media_manager.download_media(url, format=str(media_type.get()), use_proxies=with_proxies)
     except Exception:
         set_download_status_label(text="ERROR: Problem trying to download media/playlist.")
         return
@@ -62,6 +63,7 @@ def download_media():
 
     # Display result label
     set_download_status_label(text="Media downloaded successfully!")
+
 
 # Main Window
 root = tk.Tk()
@@ -91,6 +93,11 @@ is_playlist = tk.BooleanVar()
 pl_checkbox = ttk.Checkbutton(root, text="playlist?", variable=is_playlist)
 pl_checkbox.grid(row=2, column=2, sticky=tk.N, pady=5)
 
+# Proxies checkbox
+with_proxies = tk.BooleanVar()
+pl_checkbox = ttk.Checkbutton(root, text="with a proxy?", variable=with_proxies)
+pl_checkbox.grid(row=2, column=2, sticky=tk.S, pady=0)
+
 # Result Label
 download_status_label = ttk.Label(root, foreground="Red", wraplength=275, justify="center")
 
@@ -108,4 +115,4 @@ if __name__ == '__main__':
     # Backup the recently_downloaded list from current session to be used in the next one.
     # Backup from previous session will get overwritten.
     if len(recently_downloaded) != 0:
-        media_manager.download_backup(recently_downloaded)
+        backup_manager.download_backup(recently_downloaded)
