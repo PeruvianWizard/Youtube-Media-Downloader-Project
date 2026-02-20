@@ -1,4 +1,4 @@
-# Copyright (C) 2025 PeruvianWizard.
+# Copyright (C) 2026 PeruvianWizard.
 # All Rights Reserved.
 # It may be used however you want as long as it doesn't break a law.
 
@@ -46,7 +46,7 @@ def download_media():
             media_name = media_manager.download_playlist(url, format=str(media_type.get()))
             is_playlist.set(False)
         else:
-            media_name = media_manager.download_media(url, format=str(media_type.get()))
+            media_name = media_manager.download_media(url, format=str(media_type.get()), use_proxies=with_proxies)
     except Exception:
         set_download_status_label(text="ERROR: Problem trying to download media/playlist.")
         return
@@ -63,6 +63,7 @@ def download_media():
 
     # Display result label
     set_download_status_label(text="Media downloaded successfully!")
+
 
 # Main Window
 root = tk.Tk()
@@ -91,6 +92,11 @@ media_type.set("MP4")
 is_playlist = tk.BooleanVar()
 pl_checkbox = ttk.Checkbutton(root, text="playlist?", variable=is_playlist)
 pl_checkbox.grid(row=2, column=2, sticky=tk.N, pady=5)
+
+# Proxies checkbox
+with_proxies = tk.BooleanVar()
+pl_checkbox = ttk.Checkbutton(root, text="with a proxy?", variable=with_proxies)
+pl_checkbox.grid(row=2, column=2, sticky=tk.S, pady=0)
 
 # Result Label
 download_status_label = ttk.Label(root, foreground="Red", wraplength=275, justify="center")
