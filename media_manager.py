@@ -8,7 +8,6 @@ from pytubefix.cli import on_progress
 from urllib.parse import urlparse
 import subprocess
 import os
-from proxies import get_valid_proxies
 import random
 
 # Checks if provided text is a valid URL. Returns true if URL is valid or false if otherwise
@@ -24,31 +23,15 @@ def check_youtube_url(possible_url):
 
 proxies_list = []
 
-# TO-DO: use asyncio to make program wait for the proxy to finish
-def get_proxy():
-    global proxies_list
-
-    print("Getting Proxy Server...")
-    if len(proxies_list) == 0:
-        proxies_list = get_valid_proxies()
-    proxy = {'http': proxies_list.pop(random.randint(0, len(proxies_list) - 1))}
-    print(proxy)
-
-    return proxy
-
 # Downloads media given url into Downloads folder and returns name of downloaded media
-def download_media(url, format='', use_proxies=False):
+def download_media(url, format=''):
     valid_formats = ['M4A', 'MP4']
 
     # Check that correct format was passed as argument
     if format not in valid_formats:
         raise ValueError(f"Invalid format. Choose from: {valid_formats}")
 
-    if use_proxies:
-        proxy = get_proxy()
-
-    yt = YouTube(url, on_progress_callback=on_progress, 
-                 proxies= { **(proxy if use_proxies else {})})
+    yt = YouTube(url, on_progress_callback=on_progress)
 
     if format == 'M4A':
         print("Downloading audio...")

@@ -5,13 +5,14 @@
 import tkinter as tk
 from tkinter import ttk
 import media_manager
+import backup_manager
 
 # Limit for recently downloaded media dictionary
 RECENT_LIMIT = 10
 
 # Dictionary to hold recently downloaded media.
 # Restores from backup is there is any. Else, the function returns an empty dicitonary.
-recently_downloaded = media_manager.restore_backup()
+recently_downloaded = backup_manager.restore_backup()
 
 # Download to set the download_status_label text based on the state of the download
 def set_download_status_label(text=''):
@@ -108,4 +109,4 @@ if __name__ == '__main__':
     # Backup the recently_downloaded list from current session to be used in the next one.
     # Backup from previous session will get overwritten.
     if len(recently_downloaded) != 0:
-        media_manager.download_backup(recently_downloaded)
+        backup_manager.download_backup(recently_downloaded)
